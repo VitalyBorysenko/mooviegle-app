@@ -1,0 +1,30 @@
+<div class="slider-container" *ngIf="nowPlayingData && nowPlayingData.length">
+  
+  <button class="arrow" (click)="moveLeft()">
+    <fa-icon [icon]="arrowLeft"></fa-icon>
+  </button>
+  
+  <div class="pop-carousel">
+    <owl-carousel #owlElement [options]="popSlideOptions" [carouselClasses]="['owl-theme', 'dotClass', 'dotsClass']">
+      <div class="item" *ngFor="let movie of nowPlayingData;let i = index">
+        <a routerLink="movie/{{movie.id}}">
+          <div class="slide">
+
+            <div class="image-container">
+              <img [src]="getImgUrl(i)" alt="article_photo">
+            </div>
+            <div class="content">
+              <h4 class="title" matTooltip="{{movie.title}}" [matTooltipPosition]="'below'">{{movie.title | uppercase}}</h4>
+              <p class="rel-date">{{movie.release_date | date:'dd.LL.yyyy'}}</p>
+            </div>
+          </div>
+        </a>
+      </div>
+    </owl-carousel>
+  </div>
+
+  <button class="arrow" (click)="moveRight()">
+    <fa-icon [icon]="arrowRight"></fa-icon>
+  </button>
+
+</div>

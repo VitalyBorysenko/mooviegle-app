@@ -1,0 +1,30 @@
+<header class="header">
+  <div class="container">
+    <div class="header_inner">
+      <div class="left-block">
+        <a class="logo" routerLink="">Mooviegle</a>
+      </div>
+      <nav class="nav">
+        <app-social-menu></app-social-menu>
+        <a (click)="userLogin()" *ngIf="!isLogined; else user">Увійти</a>
+        <ng-template #user>
+          <div class="btn-template dropdown-button">
+            {{userEmail}} <span class="arrow">
+              <fa-icon [icon]="arrowDown"></fa-icon>
+            </span>
+            <div class="dropdown-container">
+              <div class="dropdown-wrapper dropdown-auto-width">
+                <div class="menu-option-item" routerLink="collection" [attr.disabled]='!isLogined'>
+                  Моя колекція
+                </div>
+                <div class="menu-option-item" (click)=signOut() routerLink=''>
+                  Вийти
+                </div>
+              </div>
+            </div>
+          </div>
+        </ng-template>
+      </nav>
+    </div>
+  </div>
+</header>

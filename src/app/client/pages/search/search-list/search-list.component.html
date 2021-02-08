@@ -1,0 +1,17 @@
+<div class="search-container" *ngIf="searchArray && searchArray.length">
+  <div class="item" *ngFor="let movie of searchArray;let i = index">
+    <a routerLink="/movie/{{movie.id}}">
+      <div class="card-container">
+        <img class="movie-img" [src]="getImgUrl(i)" alt="article_photo">
+
+        <div class="content">
+          <h4 class="title" matTooltip="{{movie.title}}" [matTooltipPosition]="'below'">{{movie.title | uppercase}}</h4>
+          <p class="release">Прем'єра: {{movie.release_date | date:'dd.LL.yyyy'}}</p>
+          <p class="vote">IMDB: <span>{{movie?.vote_average}}</span></p>
+          <p class="description" *ngIf="movie?.overview !==''; else noDesc">Опис: <span>{{movie?.overview}}</span></p>
+          <ng-template class="description" #noDesc>Опис: Відсутній</ng-template>
+        </div>
+      </div>
+    </a>
+  </div>
+</div>

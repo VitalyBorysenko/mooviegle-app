@@ -1,0 +1,26 @@
+.social-menu {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  list-style-type: none;
+  font-size: 20px;
+
+  li {
+    padding: 0 10px;
+  }
+}
+
+a {
+  color: #949596;
+  text-decoration: none;
+}
+
+@media screen and (max-width: 540px) {
+  .social-menu {
+    font-size: 12px;
+
+    li {
+      padding: 0 5px;
+    }
+  }
+}

@@ -1,0 +1,97 @@
+.main {
+  background-image: url('/assets/images/Mask_Group_21.svg'), linear-gradient(to right, #0059AA, #000000);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.container {
+  width: 600px;
+  text-align: center;
+  color: #f0ffff;
+  line-height: 1;
+  margin: 0 auto;
+}
+
+.logo-icon {
+  font-size: 100px;
+}
+
+.title {
+  font-family: "montserrat-bold";
+  font-size: 110px;
+}
+
+.subtext {
+  font-family: 'Kaushan Script', cursive;
+  font-size: 50px;
+  line-height: 1.6;
+}
+
+.search-inner {
+  padding-bottom: 20px;
+}
+
+input {
+  font-family: "montserrat-medium";
+  font-size: 25px;
+  border: none;
+  border-top-left-radius: 8px;
+  border-bottom-left-radius: 8px;
+  outline: none;
+  padding: 10px 20px;
+  color: #0059AA;
+  transition: all 0.3s ease;
+}
+
+.search {
+  border-top-right-radius: 8px;
+  border-bottom-right-radius: 8px;
+  font-family: "montserrat-medium";
+  color: #0059AA;
+  outline: none;
+  font-size: 25px;
+  padding: 10px 30px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.search:disabled {
+  color: #f0ffff;
+  opacity: .5;
+  cursor: auto;
+}
+
+@media screen and (max-width: 768px) {
+
+  .container {
+    width: 270px;
+  }
+
+  .logo-icon {
+    font-size: 30px;
+  }
+  
+  .title {
+    font-size: 40px;
+  }
+  
+  .subtext {
+    font-size: 20px;
+  }
+
+  input {
+    font-size: 15px;
+    padding: 5px 10px;
+    border-radius: 0;
+    width: 100%;
+  }
+  
+  .search {
+    font-size: 15px;
+    padding: 5px 10px;
+    border-radius: 0;
+    width: 100%;
+  }
+
+}

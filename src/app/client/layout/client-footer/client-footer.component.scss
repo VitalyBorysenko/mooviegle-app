@@ -1,0 +1,30 @@
+.footer {
+  width: 100%;
+  background-color: #032541;
+  color: #949596;
+  padding: 5px;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.footer_inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  .logo {
+    font-family: 'montserrat-bold';
+    font-size: 20px;
+    text-decoration: none;
+    color: #949596;
+  }
+}
+
+@media screen and (max-width: 539px){
+  .copy{
+    font-size: 8px;
+  }
+}

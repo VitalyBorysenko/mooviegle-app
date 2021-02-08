@@ -1,0 +1,23 @@
+<main class="main">
+  <div class="container">
+    <div class="logo-icon">
+      <fa-icon [icon]="filmIcon"></fa-icon>
+    </div>
+    <h1 class="title">Mooviegle</h1>
+    <p class="subtext">all about movie</p>
+
+    <div class="search-inner">
+      <input
+        type="text"
+        placeholder="Введіть назву фільма"
+        [(ngModel)]="searchText"
+        (keyup.enter)="Search(searchText)">
+      <button
+        type="button"
+        class="search"
+        [disabled]="!searchText"
+        (click)="Search(searchText)"
+        >Знайти</button>
+    </div>
+  </div>
+</main>

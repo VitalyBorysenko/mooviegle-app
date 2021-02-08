@@ -1,0 +1,229 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+a {
+  cursor: pointer;
+}
+
+.login-wrapper {
+  width: 440px;
+
+
+  .box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0;
+    border: none;
+    font-family: "montserrat-medium";
+    font-size: 13px;
+    color: #7E787C;
+
+    .close-btn {
+      align-self: flex-end;
+      border: 1px solid #7E787C;
+
+      #sidebar-wrapper {
+        margin: 0;
+        width: fit-content;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 10px;
+        list-style-type: none;
+      }
+
+      li {
+        line-height: 1;
+      }
+
+      .hamburger .line {
+        width: 22px;
+        height: 2px;
+        background-color: #7E787C;
+        display: block;
+        margin: 4px 0;
+      }
+
+      #sidebar-wrapper:hover {
+        cursor: pointer;
+      }
+
+      #hamburger-1 .line:nth-child(1) {
+        transform: translateY(4px) rotate(45deg);
+      }
+
+      #hamburger-1 .line:nth-child(2) {
+        transform: translateY(-2px) rotate(-45deg);
+      }
+
+    }
+
+    .mat-card-title {
+      font-family: "montserrat-bold";
+      font-size: 32px;
+      color: #000000;
+      letter-spacing: 3px;
+    }
+
+    .form {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 0 45px;
+
+      .mat-card-title-group {
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+
+        .social-head {
+          font-size: 13px;
+          margin-bottom: 33px;
+        }
+
+        ul {
+          display: flex;
+          justify-content: space-around;
+          list-style-type: none;
+          width: 100%;
+          font-size: 30px;
+          padding-bottom: 23px;
+          margin-bottom: 24px;
+          border-bottom: 1px solid #7E787C;
+
+          li {
+
+            a {
+              color: #000000;
+              outline: none;
+            }
+          }
+        }
+      }
+
+      .mat-card-content {
+        display: flex;
+        flex-direction: column;
+
+        .mat-form-field {
+          font-family: "montserrat-medium";
+          font-size: 13px;
+        }
+
+        .log-pass {
+          display: flex;
+          flex-direction: row;
+          justify-content: space-between;
+
+          .mat-form-field {
+            width: 48%;
+          }
+        }
+      }
+
+      .btn-reg {
+        font-family: "montserrat-semibold";
+        font-size: 15px;
+        color: #f0ffff;
+        background-color: #0059AA;
+        padding: 10px 20px;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        outline: none;
+      }
+
+      .btn-reg:disabled {
+        opacity: .5;
+        cursor: auto;
+      }
+    }
+
+    .forgot-pass {
+      display: flex;
+      justify-content: center;
+      padding: 0 113px 48px;
+      border-bottom: 1px solid #7E787C;
+
+      a {
+        align-self: center;
+        font-family: "montserrat-medium";
+        font-size: 15px;
+        color: #4B4348;
+        text-decoration: none;
+        white-space: nowrap;
+      }
+    }
+
+    .signIn {
+      font-size: 15px;
+      margin: 20px 0;
+
+      a {
+        font-family: "montserrat-semibold";
+        font-size: 15px;
+        color: #0059AA;
+        ;
+        text-decoration: none;
+      }
+    }
+
+    .subscribe {
+      background-color: #CCCCCC;
+      display: flex;
+      justify-content: center;
+      width: 100%;
+      padding: 20px 0;
+
+      a {
+        font-family: "montserrat-bold";
+        font-size: 15px;
+        color: #4B4348;
+        text-decoration: none;
+      }
+    }
+  }
+}
+
+@media screen and (max-width:768px) {
+  .login-wrapper {
+    width: 100%;
+
+    .box {
+      .mat-card-title {
+        margin-top: 20px;
+      }
+
+      .form {
+        margin: 5px;
+        padding-bottom: 10px;
+
+        .mat-card-title-group {
+          .social-head {
+            margin-bottom: 20px;
+          }
+
+          ul {
+            font-size: 20px;
+            padding-bottom: 10px;
+          }
+        }
+
+        .btn-reg {
+          margin-top: 0;
+        }
+      }
+
+      .signIn {
+        margin-bottom: 10px;
+      }
+    }
+  }
+}
+
+.mat-stroked-button[disabled][disabled] {
+  filter: grayscale(100%);
+}

@@ -1,0 +1,122 @@
+.header {
+  width: 100%;
+  background-color: #032541;
+  color: #949596;
+  padding: 5px;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.header_inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  .left-block {
+    .logo {
+      font-family: 'montserrat-bold';
+      font-size: 20px;
+      text-decoration: none;
+      color: #949596;
+    }
+  }
+
+  .nav {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    a {
+      padding: 0 10px;
+      font-size: 15px;
+      border-left: 1px solid #949596;
+      margin-left: 20px;
+      cursor: pointer;
+    }
+  }
+}
+
+
+div.btn-template {
+  font-size: 15px;
+  margin-left: 14px;
+  height: 30px;
+  border: none;
+  border-radius: 3px;
+  transition: 0.3s ease;
+  line-height: 1.37 !important;
+  box-shadow: none !important;
+  cursor: pointer;
+  z-index: 5;
+
+  .arrow{
+    align-self: center;
+    padding: 0 3px;
+  }
+
+  &.dropdown-button {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+
+    &:hover .dropdown-container {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .dropdown-container {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      padding-top: 4px;
+      opacity: 0;
+      pointer-events: none;
+      transition: 0.3s ease;
+    }
+
+    .dropdown-wrapper {
+      width: 177px;
+      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16);
+      border-radius: 2px;
+      border: 1px solid #d5d5d5;
+      background-color: #ffffff;
+      padding: 5px 0;
+
+      &.dropdown-auto-width {
+        width: unset;
+      }
+
+    }
+
+    .menu-option-item {
+      display: flex;
+      align-items: center;
+      padding: 4px 20px;
+      transition: 0.3s ease;
+      cursor: pointer;
+      white-space: nowrap;
+      outline: none;
+
+      &:hover {
+        background-color: #f6f9fa;
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 540px) {
+
+  .header_inner {
+    .nav {
+      a {
+        padding: 0 10px;
+        margin-left: 10px;
+      }
+    }
+  }
+}

@@ -1,0 +1,68 @@
+.container {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  background-position: right -200px top;
+  background-repeat: no-repeat;
+  background-size: cover;
+
+  .blur {
+    width: 100%;
+    background: linear-gradient(to right, rgba(12.55%, 16.47%, 16.86%, 1.00) 150px, rgba(12.55%, 16.47%, 16.86%, 0.84) 100%);
+
+    .card-container {
+      display: flex;
+      flex-direction: row;
+      padding: 30px;
+      max-width: 1188px;
+      margin: 0 auto;
+
+      .movie-img {
+        width: 300px;
+        min-width: 300px;
+        height: 450px;
+      }
+
+      .content {
+        display: flex;
+        flex-direction: column;
+        font-family: "montserrat-medium";
+        font-size: 20px;
+        color: #f0ffff;
+        width: 100%;
+        padding: 0 40px;
+
+        .title {
+          font-family: "montserrat-bold";
+          font-size: 35px;
+        }
+
+        span {
+          font-family: "montserrat-regular";
+        }
+
+        .add-movie {
+          font-family: "montserrat-medium";
+          color: #0059AA;
+          outline: none;
+          font-size: 25px;
+          padding: 10px 30px;
+          transition: all 0.3s ease;
+          cursor: pointer;
+          border-radius: 8px;
+          margin-top: 20px;
+          width: fit-content;
+          align-self: flex-end;
+        }
+
+        .add-movie:disabled {
+          color: #f0ffff;
+          opacity: 0.5;
+          cursor: auto;
+          touch-action: none;
+        }
+      }
+    }
+  }
+
+}

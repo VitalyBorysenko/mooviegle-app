@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1366" height="268" viewBox="0 0 1366 268">
+  <defs>
+    <linearGradient id="linear-gradient" x1="-0.009" y1="-0.07" x2="1.138" y2="1.179" gradientUnits="objectBoundingBox">
+      <stop offset="0" stop-color="#2b296f"/>
+      <stop offset="1"/>
+    </linearGradient>
+    <clipPath id="clip-path">
+      <rect id="Rectangle_178" data-name="Rectangle 178" width="1366" height="268" transform="translate(0 47)" fill="url(#linear-gradient)"/>
+    </clipPath>
+    <clipPath id="clip-path-2">
+      <rect id="Rectangle_48" data-name="Rectangle 48" width="1170" height="410" transform="translate(0 47)" fill="url(#linear-gradient)"/>
+    </clipPath>
+  </defs>
+  <g id="Mask_Group_21" data-name="Mask Group 21" transform="translate(0 -47)" clip-path="url(#clip-path)">
+    <g id="Mask_Group_3" data-name="Mask Group 3" transform="translate(196 -93)" opacity="0.7" clip-path="url(#clip-path-2)">
+      <g id="Group_7949" data-name="Group 7949" transform="translate(678.229 65.606)">
+        <g id="Group_7937" data-name="Group 7937" transform="translate(215.671 14.745)">
+          <circle id="Ellipse_7701" data-name="Ellipse 7701" cx="159.02" cy="159.02" r="159.02" transform="translate(3.18)" fill="none" stroke="#528ec4" stroke-miterlimit="10" stroke-width="0.75"/>
+          <circle id="Ellipse_7702" data-name="Ellipse 7702" cx="3.975" cy="3.975" r="3.975" transform="translate(342.688 155.044)" fill="#3664bf" stroke="#528ec4" stroke-width="1"/>
+        </g>
+        <g id="Group_7938" data-name="Group 7938" transform="translate(238.53 278.814)">
+          <circle id="Ellipse_7704" data-name="Ellipse 7704" cx="159.02" cy="159.02" r="159.02" fill="none" stroke="#528ec4" stroke-miterlimit="10" stroke-width="0.75"/>
+          <circle id="Ellipse_7705" data-name="Ellipse 7705" cx="3.975" cy="3.975" r="3.975" transform="translate(62.813 314.794)" fill="#3664bf" stroke="#528ec4" stroke-width="1"/>
+          <circle id="Ellipse_7706" data-name="Ellipse 7706" cx="3.975" cy="3.975" r="3.975" transform="translate(233.468 17.62)" fill="#008fd5"/>
+        </g>
+        <g id="Group_7939" data-name="Group 7939" transform="translate(290.176 215.671)">
+          <circle id="Ellipse_7707" data-name="Ellipse 7707" cx="159.02" cy="159.02" r="159.02" transform="translate(0 3.18)" fill="none" stroke="#528ec4" stroke-miterlimit="10" stroke-width="0.75"/>
+          <circle id="Ellipse_7708" data-name="Ellipse 7708" cx="3.975" cy="3.975" r="3.975" transform="translate(155.044 342.688)" fill="#3664bf" stroke="#528ec4" stroke-width="1"/>
+          <circle id="Ellipse_7709" data-name="Ellipse 7709" cx="3.975" cy="3.975" r="3.975" transform="translate(154.249 0)" fill="#008fd5"/>
+        </g>
+        <g id="Group_7940" data-name="Group 7940" transform="translate(278.814 66.391)">
+          <circle id="Ellipse_7710" data-name="Ellipse 7710" cx="159.02" cy="159.02" r="159.02" fill="none" stroke="#528ec4" stroke-miterlimit="10" stroke-width="0.75"/>
+          <circle id="Ellipse_7711" data-name="Ellipse 7711" cx="3.975" cy="3.975" r="3.975" transform="translate(314.794 247.276)" fill="#3664bf" stroke="#528ec4" stroke-width="1"/>
+          <circle id="Ellipse_7712" data-name="Ellipse 7712" cx="3.975" cy="3.975" r="3.975" transform="translate(17.62 76.621)" fill="#008fd5"/>
+        </g>
+        <g id="Group_7941" data-name="Group 7941" transform="translate(304.921 141.099)">
+          <circle id="Ellipse_7713" data-name="Ellipse 7713" cx="159.02" cy="159.02" r="159.02" fill="none" stroke="#528ec4" stroke-miterlimit="10" stroke-width="0.75"/>
+          <circle id="Ellipse_7714" data-name="Ellipse 7714" cx="3.975" cy="3.975" r="3.975" transform="translate(247.276 314.794)" fill="#3664bf" stroke="#528ec4" stroke-width="1"/>
+          <circle id="Ellipse_7715" data-name="Ellipse 7715" cx="3.975" cy="3.975" r="3.975" transform="translate(75.244 18.415)" fill="#008fd5"/>
+        </g>
+        <g id="Group_7942" data-name="Group 7942" transform="translate(141.099)">
+          <circle id="Ellipse_7716" data-name="Ellipse 7716" cx="159.02" cy="159.02" r="159.02" fill="none" stroke="#528ec4" stroke-miterlimit="10" stroke-width="0.75"/>
+          <circle id="Ellipse_7717" data-name="Ellipse 7717" cx="3.975" cy="3.975" r="3.975" transform="translate(314.794 62.813)" fill="#2145de"/>
+          <circle id="Ellipse_7718" data-name="Ellipse 7718" cx="3.975" cy="3.975" r="3.975" transform="translate(18.415 234.845)" fill="#2145de"/>
+        </g>
+        <g id="Group_7943" data-name="Group 7943" transform="translate(56.651 290.176)">
+          <circle id="Ellipse_7719" data-name="Ellipse 7719" cx="159.02" cy="159.02" r="159.02" transform="translate(29.419)" fill="none" stroke="#528ec4" stroke-miterlimit="10" stroke-width="0.75"/>
+          <circle id="Ellipse_7720" data-name="Ellipse 7720" cx="3.975" cy="3.975" r="3.975" transform="translate(0 155.044)" fill="#3664bf" stroke="#528ec4" stroke-width="1"/>
+          <circle id="Ellipse_7721" data-name="Ellipse 7721" cx="3.975" cy="3.975" r="3.975" transform="translate(342.688 154.249)" fill="#3664bf" stroke="#528ec4" stroke-width="1"/>
+        </g>
+        <g id="Group_7944" data-name="Group 7944" transform="translate(159.117 304.921)">
+          <circle id="Ellipse_7722" data-name="Ellipse 7722" cx="159.02" cy="159.02" r="159.02" transform="translate(4.705 0)" fill="none" stroke="#528ec4" stroke-miterlimit="10" stroke-width="0.75"/>
+          <circle id="Ellipse_7723" data-name="Ellipse 7723" cx="3.975" cy="3.975" r="3.975" transform="translate(0 247.276)" fill="#3664bf" stroke="#528ec4" stroke-width="1"/>
+          <circle id="Ellipse_7724" data-name="Ellipse 7724" cx="3.975" cy="3.975" r="3.975" transform="translate(296.379 75.243)" fill="#2145de"/>
+        </g>
+        <g id="Group_7945" data-name="Group 7945" transform="translate(14.745 56.651)">
+          <circle id="Ellipse_7725" data-name="Ellipse 7725" cx="159.02" cy="159.02" r="159.02" transform="translate(0 29.419)" fill="none" stroke="#528ec4" stroke-miterlimit="10" stroke-width="0.75"/>
+          <circle id="Ellipse_7726" data-name="Ellipse 7726" cx="3.975" cy="3.975" r="3.975" transform="translate(155.044)" fill="#2145de"/>
+          <circle id="Ellipse_7727" data-name="Ellipse 7727" cx="3.975" cy="3.975" r="3.975" transform="translate(155.84 342.688)" fill="#3664bf" stroke="#528ec4" stroke-width="1"/>
+        </g>
+        <g id="Group_7946" data-name="Group 7946" transform="translate(66.391 21.401)">
+          <circle id="Ellipse_7728" data-name="Ellipse 7728" cx="159.02" cy="159.02" r="159.02" transform="translate(0 4.705)" fill="none" stroke="#528ec4" stroke-miterlimit="10" stroke-width="0.75"/>
+          <circle id="Ellipse_7729" data-name="Ellipse 7729" cx="3.975" cy="3.975" r="3.975" transform="translate(247.276)" fill="#2145de"/>
+          <circle id="Ellipse_7730" data-name="Ellipse 7730" cx="3.975" cy="3.975" r="3.975" transform="translate(76.621 297.174)" fill="#008fd5"/>
+        </g>
+        <g id="Group_7947" data-name="Group 7947" transform="translate(0 159.117)">
+          <circle id="Ellipse_7731" data-name="Ellipse 7731" cx="159.02" cy="159.02" r="159.02" transform="translate(0 4.705)" fill="none" stroke="#528ec4" stroke-miterlimit="10" stroke-width="0.75"/>
+          <circle id="Ellipse_7732" data-name="Ellipse 7732" cx="3.975" cy="3.975" r="3.975" transform="translate(64.526 0)" fill="#008fd5"/>
+          <circle id="Ellipse_7733" data-name="Ellipse 7733" cx="3.975" cy="3.975" r="3.975" transform="translate(234.845 296.379)" fill="#3664bf" stroke="#528ec4" stroke-width="1"/>
+        </g>
+        <g id="Group_7948" data-name="Group 7948" transform="translate(22.258 238.53)">
+          <circle id="Ellipse_7734" data-name="Ellipse 7734" cx="159.02" cy="159.02" r="159.02" transform="translate(3.849)" fill="none" stroke="#528ec4" stroke-miterlimit="10" stroke-width="0.75"/>
+          <circle id="Ellipse_7735" data-name="Ellipse 7735" cx="3.975" cy="3.975" r="3.975" transform="translate(296.317 233.468)" fill="#3664bf" stroke="#528ec4" stroke-width="1"/>
+          <circle id="Ellipse_7736" data-name="Ellipse 7736" cx="3.975" cy="3.975" r="3.975" transform="translate(0 61.956)" fill="#008fd5"/>
+        </g>
+      </g>
+      <circle id="Ellipse_7787" data-name="Ellipse 7787" cx="3.975" cy="3.975" r="3.975" transform="translate(893.9 236.191)" fill="#008fd5"/>
+    </g>
+  </g>
+</svg>
