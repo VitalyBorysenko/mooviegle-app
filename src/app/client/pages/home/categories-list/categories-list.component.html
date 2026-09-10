@@ -2,9 +2,9 @@
   <div class="title">
     <h3 class="category-title">Популярні фільми</h3>
   </div>
-  <app-pop-slider></app-pop-slider>
+  <app-movie-slider [loadMovies]="loadPopular"></app-movie-slider>
   <div class="title">
     <h3 class="category-title">Зараз в прокаті</h3>
   </div>
-  <app-nowplaying-slider></app-nowplaying-slider>
+  <app-movie-slider [loadMovies]="loadNowPlaying"></app-movie-slider>
 </div>

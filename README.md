@@ -1,27 +1,60 @@
-# MooviegleApp
+# Mooviegle App
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 11.1.1.
+Angular 22 movie catalog app using TMDB API and Firebase REST auth/collection.
 
-## Development server
+## Requirements
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+- Node.js >= 22.12.0
+- npm >= 10
 
-## Code scaffolding
+## Setup
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+```bash
+npm install
+cp src/environments/environment.example.ts src/environments/environment.ts
+cp src/environments/environment.example.ts src/environments/environment.prod.ts
+```
+
+Update API keys in both environment files. See [`firebase/README.md`](firebase/README.md) for Firebase setup.
+
+## Development
+
+```bash
+npm start
+```
+
+Open `http://localhost:4200/`.
 
 ## Build
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
+```bash
+npm run build
+```
 
-## Running unit tests
+Production output is written to `dist/mooviegle-app/browser`.
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+## Tests
 
-## Running end-to-end tests
+```bash
+npm test
+```
 
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
+## Lint / Format
 
-## Further help
+```bash
+npm run lint
+npm run format
+```
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+## Architecture
+
+- `src/app/client` — UI shell, pages, modals
+- `src/app/services/tmdb.service.ts` — TMDB API
+- `src/app/auth` — Firebase REST auth + auth state/guard
+- `src/app/shared` — reusable movie slider and TMDB poster pipe
+- `src/app/core/interceptors` — Firebase auth token injection
+
+## Notes
+
+- Local environment files are gitignored; use `environment.example.ts` as template.
+- Original Firebase RTDB project may return `423 Locked`; configure a new Firebase project to restore collection/login.

@@ -1,52 +1,44 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+import { RouterLink } from '@angular/router';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faCaretDown } from '@fortawesome/free-solid-svg-icons';
-import { TokenStorageService } from 'src/app/auth/token-storage.service';
+import { AuthStateService } from 'src/app/auth/auth-state.service';
 import { LoginComponent } from '../../modals/login/login.component';
+import { SocialMenuComponent } from '../social-menu/social-menu.component';
 
 @Component({
+  standalone: true,
   selector: 'app-client-header',
   templateUrl: './client-header.component.html',
-  styleUrls: ['./client-header.component.scss']
+  styleUrls: ['./client-header.component.scss'],
+  imports: [RouterLink, FontAwesomeModule, SocialMenuComponent],
 })
 export class ClientHeaderComponent implements OnInit {
-arrowDown=faCaretDown;
-  isLogined: boolean = false;
-  userEmail!: string | null;
+  arrowDown = faCaretDown;
 
   constructor(
     private dialog: MatDialog,
-    private tokenStorage: TokenStorageService,
+    public authState: AuthStateService,
   ) { }
 
   ngOnInit(): void {
-    if (this.tokenStorage.getToken()) {
-      this.isLogined = true;
-      this.userEmail = this.tokenStorage.getUserEmail();
-    }
+    this.authState.syncFromStorage();
   }
 
-  userLogin() {
+  userLogin(): void {
     this.openDialogLogin();
   }
 
-  openDialogLogin() {
+  openDialogLogin(): void {
     const dialogConfig = new MatDialogConfig();
-
     dialogConfig.disableClose = true;
     dialogConfig.autoFocus = true;
-    dialogConfig.panelClass = 'register-custom-styles'
-
-    const dialogRef = this.dialog.open(LoginComponent, dialogConfig);
+    dialogConfig.panelClass = 'register-custom-styles';
+    this.dialog.open(LoginComponent, dialogConfig);
   }
 
-  signOut() {
-    this.tokenStorage.signOut();
-    this.reloadPage();
+  signOut(): void {
+    this.authState.clearSession();
   }
-
-  reloadPage() {
-    window.location.reload();
-  }
-
 }

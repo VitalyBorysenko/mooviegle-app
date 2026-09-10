@@ -1,19 +1,16 @@
-import { Component, OnInit } from '@angular/core';
-import { faFacebookF, faInstagram, faTwitter, faYoutube } from '@fortawesome/free-brands-svg-icons';
+import { Component } from '@angular/core';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { faFacebookF, faInstagram, faTwitter } from '@fortawesome/free-brands-svg-icons';
+
 @Component({
+  standalone: true,
   selector: 'app-social-menu',
   templateUrl: './social-menu.component.html',
-  styleUrls: ['./social-menu.component.scss']
+  styleUrls: ['./social-menu.component.scss'],
+  imports: [FontAwesomeModule],
 })
-export class SocialMenuComponent implements OnInit {
-
-  constructor() { }
+export class SocialMenuComponent {
   Facebook = faFacebookF;
   Twitter = faTwitter;
   Instagram = faInstagram;
-  // YouTube = faYoutube;
-
-  ngOnInit(): void {
-  }
-
 }

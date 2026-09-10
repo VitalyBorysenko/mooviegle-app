@@ -8,36 +8,33 @@ const USERID_KEY = 'AuthUserId';
   providedIn: 'root'
 })
 export class TokenStorageService {
-  constructor() { }
-
-  signOut() {
-    window.sessionStorage.clear();
+  signOut(): void {
+    window.sessionStorage.removeItem(TOKEN_KEY);
+    window.sessionStorage.removeItem(USEREMAIL_KEY);
+    window.sessionStorage.removeItem(USERID_KEY);
   }
 
-  public saveToken(token: string) {
-    window.sessionStorage.removeItem(TOKEN_KEY);
+  saveToken(token: string): void {
     window.sessionStorage.setItem(TOKEN_KEY, token);
   }
 
-  public getToken(): any {
+  getToken(): string | null {
     return sessionStorage.getItem(TOKEN_KEY);
   }
 
-  public saveUserEmail(email: string) {
-    window.sessionStorage.removeItem(USEREMAIL_KEY);
+  saveUserEmail(email: string): void {
     window.sessionStorage.setItem(USEREMAIL_KEY, email);
   }
 
-  public getUserEmail() {
+  getUserEmail(): string | null {
     return sessionStorage.getItem(USEREMAIL_KEY);
   }
 
-  public getUserId(): any {
+  getUserId(): string | null {
     return sessionStorage.getItem(USERID_KEY);
   }
-  
-  public saveUserId(id: string) {
-    window.sessionStorage.removeItem(USERID_KEY);
+
+  saveUserId(id: string): void {
     window.sessionStorage.setItem(USERID_KEY, id);
   }
 }

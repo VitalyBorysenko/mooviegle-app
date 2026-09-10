@@ -1,84 +1,129 @@
+import { AsyncPipe, DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute } from '@angular/router';
-import { Subscription } from 'rxjs';
-import { TokenStorageService } from 'src/app/auth/token-storage.service';
+import { Observable, of } from 'rxjs';
+import { catchError, map, startWith, switchMap, tap } from 'rxjs/operators';
+import { AuthStateService } from 'src/app/auth/auth-state.service';
+import { Movie } from 'src/app/models/model.Movie';
+import { TmdbMovieDetails } from 'src/app/models/tmdb/tmdb.models';
 import { CollectionService } from 'src/app/services/collection.service';
-import { MovieService } from 'src/app/services/movie.service';
+import { TmdbService } from 'src/app/services/tmdb.service';
+import { TmdbPosterPipe } from 'src/app/shared/pipes/tmdb-poster.pipe';
+import { HomeSearchComponent } from '../home/home-search/home-search.component';
+
+interface MovieCardViewModel {
+  movieData?: TmdbMovieDetails;
+  isLoading: boolean;
+  loadError: boolean;
+  isInCollection: boolean;
+}
 
 @Component({
+  standalone: true,
   selector: 'app-card-movie',
   templateUrl: './card-movie.component.html',
-  styleUrls: ['./card-movie.component.scss']
+  styleUrls: ['./card-movie.component.scss'],
+  imports: [AsyncPipe, DatePipe, HomeSearchComponent, TmdbPosterPipe],
 })
 export class CardMovieComponent implements OnInit {
-
-  movieData: any;
-  movieId: any;
-  isMovie: boolean = false;
+  viewModel$!: Observable<MovieCardViewModel>;
+  collectionAdded = false;
 
   constructor(
-    public movieService: MovieService,
+    private tmdbService: TmdbService,
     public collectionService: CollectionService,
     private route: ActivatedRoute,
-    private tokenStorage: TokenStorageService,
+    private authState: AuthStateService,
     public _snackBar: MatSnackBar,
   ) {
-    this.route.params.subscribe(params => {
-      this.movieId = +params.cardMovieId;
-    });
-    this.filterColection();
   }
 
   ngOnInit(): void {
-    this.loadMovie();
+    this.viewModel$ = this.route.params.pipe(
+      tap(() => {
+        this.collectionAdded = false;
+      }),
+      map((params) => +params['cardMovieId']),
+      switchMap((movieId) => this.loadMovieCard(movieId)),
+    );
   }
 
-  private _subs: Subscription = new Subscription();
-  ngOnDestroy(): void {
-    this._subs.unsubscribe();
-  }
-
-  loadMovie() {
-    this._subs.add(this.movieService.getMovie(this.movieId).subscribe(data => {
-      this.movieData = data;
-    }))
-  }
-
-  getImgUrl(path: string) {
-    const imgSrc = `https://image.tmdb.org/t/p/w500`;
-    return imgSrc + path;
-  }
-
-  addToCollection() {
-    const movie = {
-      user_id: this.tokenStorage.getUserId(),
-      backdrop_path: this.movieData.backdrop_path,
-      poster_path: this.movieData.poster_path,
-      id: this.movieData.id,
-      title: this.movieData.title,
-      release_date: this.movieData.release_date,
-      vote_average: this.movieData.vote_average,
-      overview: this.movieData.overview
-    }
-    this.collectionService.addMovie(movie).subscribe(res => {
-      this._snackBar.open('Успішно додано до колекції', 'Х', {
-        duration: 3000,
-        horizontalPosition: 'center',
-        verticalPosition: 'top',
-      });
-      this.isMovie = true;
-    })
-  }
-
-  filterColection() {
-    this.collectionService.getCollection().subscribe(data => {
-      const filteredBbColection = data.filter(col => col.user_id === this.tokenStorage.getUserId() && col.id === this.movieData.id
-      );
-      if (filteredBbColection.length) {
-        this.isMovie = true;
+  addToCollection(viewModel: MovieCardViewModel): void {
+    if (!this.authState.isLoggedIn() || !viewModel.movieData || viewModel.isInCollection || this.collectionAdded) {
+      if (!this.authState.isLoggedIn()) {
+        this._snackBar.open('Увійдіть, щоб додати фільм до колекції', 'Х', {
+          duration: 3000,
+          horizontalPosition: 'center',
+          verticalPosition: 'top',
+        });
       }
-    })
+      return;
+    }
+
+    const userId = this.authState.getUserId();
+    if (!userId) {
+      return;
+    }
+
+    const movieData = viewModel.movieData;
+    const movie: Movie = {
+      user_id: userId,
+      backdrop_path: movieData.backdrop_path ?? undefined,
+      poster_path: movieData.poster_path ?? undefined,
+      id: movieData.id,
+      title: movieData.title,
+      release_date: movieData.release_date,
+      vote_average: movieData.vote_average,
+      overview: movieData.overview
+    };
+
+    this.collectionService.addMovie(movie).subscribe({
+      next: () => {
+        this._snackBar.open('Успішно додано до колекції', 'Х', {
+          duration: 3000,
+          horizontalPosition: 'center',
+          verticalPosition: 'top',
+        });
+        this.collectionAdded = true;
+      },
+      error: () => {
+        // Помилку вже показує CollectionService.
+      }
+    });
   }
 
+  private loadMovieCard(movieId: number): Observable<MovieCardViewModel> {
+    return this.tmdbService.getMovieById(movieId).pipe(
+      switchMap((movieData) => this.withCollectionStatus(movieData)),
+      startWith({ isLoading: true, loadError: false, isInCollection: false }),
+      catchError(() => of({ isLoading: false, loadError: true, isInCollection: false })),
+    );
+  }
+
+  private withCollectionStatus(movieData: TmdbMovieDetails): Observable<MovieCardViewModel> {
+    const baseViewModel: MovieCardViewModel = {
+      movieData,
+      isLoading: false,
+      loadError: false,
+      isInCollection: false,
+    };
+
+    if (!this.authState.isLoggedIn()) {
+      return of(baseViewModel);
+    }
+
+    const userId = this.authState.getUserId();
+    if (!userId) {
+      return of(baseViewModel);
+    }
+
+    return this.collectionService.getCollection().pipe(
+      map((data) => ({
+        ...baseViewModel,
+        isInCollection: data.some((col) => col.user_id === userId && col.id === movieData.id),
+      })),
+      catchError(() => of(baseViewModel)),
+    );
+  }
 }

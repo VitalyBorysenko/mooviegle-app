@@ -1,4 +1,4 @@
-<div class="login-wrapper" fxLayout="row" fxLayoutAlign="center center">
+<div class="login-wrapper">
 
   <mat-card class="box">
 
@@ -29,17 +29,17 @@
           <mat-form-field appearance="outline">
             <mat-label>E-mail</mat-label>
             <input matInput formControlName="email" placeholder="Ex. pat@example.com">
-            <mat-error *ngIf="formControl('email')?.errors">
-              невірний email
-            </mat-error>
+            @if (formControl('email')?.errors) {
+              <mat-error>невірний email</mat-error>
+            }
           </mat-form-field>
 
           <mat-form-field appearance="outline">
             <mat-label>Пароль</mat-label>
             <input matInput type="password" formControlName="password">
-            <mat-error *ngIf="formControl('password')?.errors">
-              не менше 6 символів
-            </mat-error>
+            @if (formControl('password')?.errors) {
+              <mat-error>не менше 6 символів</mat-error>
+            }
           </mat-form-field>
         </div>
 
