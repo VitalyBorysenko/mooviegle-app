@@ -1,0 +1,47 @@
+@if (viewModel$ | async; as vm) {
+  @if (vm.isLoading) {
+    <p class="slider-state">Завантаження фільмів...</p>
+  }
+  @if (!vm.isLoading && vm.loadError) {
+    <p class="slider-state slider-state--error">Не вдалося завантажити фільми</p>
+  }
+  @if (!vm.isLoading && !vm.loadError && !vm.movies.length) {
+    <p class="slider-state">Фільми не знайдено</p>
+  }
+
+  @if (!vm.isLoading && vm.movies.length) {
+    <div class="slider-container">
+      <button type="button" class="arrow" (click)="moveLeft()" aria-label="Попередні фільми">
+        <fa-icon [icon]="arrowLeft"></fa-icon>
+      </button>
+
+      <div class="pop-carousel">
+        <div class="movie-track" #track>
+          @for (movie of vm.movies; track movie.id) {
+            <a class="movie-card" [routerLink]="['/movie', movie.id]">
+              <div class="slide">
+                <div class="image-container">
+                  @if (movie.poster_path) {
+                    <img [src]="movie.poster_path | tmdbPoster" [alt]="movie.title" loading="lazy">
+                  } @else {
+                    <div class="poster-placeholder" aria-hidden="true"></div>
+                  }
+                </div>
+                <div class="content">
+                  <h4 class="title" matTooltip="{{movie.title}}" [matTooltipPosition]="'below'">{{movie.title | uppercase}}</h4>
+                  @if (movie.release_date) {
+                    <p class="rel-date">{{movie.release_date | date:'dd.MM.yyyy'}}</p>
+                  }
+                </div>
+              </div>
+            </a>
+          }
+        </div>
+      </div>
+
+      <button type="button" class="arrow" (click)="moveRight()" aria-label="Наступні фільми">
+        <fa-icon [icon]="arrowRight"></fa-icon>
+      </button>
+    </div>
+  }
+}

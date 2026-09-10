@@ -1,21 +1,31 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
 import { MatDialog, MatDialogConfig, MatDialogRef } from '@angular/material/dialog';
-import { TokenStorageService } from 'src/app/auth/token-storage.service';
-import { RegisterComponent } from '../register/register.component';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { AuthStateService } from 'src/app/auth/auth-state.service';
 import { AuthLoginInfo } from 'src/app/auth/login-info';
 import { AuthService } from 'src/app/auth/auth.service';
+import { RegisterComponent } from '../register/register.component';
 
 @Component({
+  standalone: true,
   selector: 'app-login',
   templateUrl: './login.component.html',
-  styleUrls: ['./login.component.scss']
+  styleUrls: ['./login.component.scss'],
+  imports: [
+    ReactiveFormsModule,
+    MatCardModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+  ],
 })
 export class LoginComponent implements OnInit {
-
   loginForm!: FormGroup;
-  isLoggedIn = false;
-  roles: any;
+  isSubmitting = false;
 
   private loginInfo!: AuthLoginInfo;
 
@@ -24,68 +34,59 @@ export class LoginComponent implements OnInit {
     private formBuilder: FormBuilder,
     public dialogRef: MatDialogRef<LoginComponent>,
     private authService: AuthService,
-    private tokenStorage: TokenStorageService,
+    private authState: AuthStateService,
   ) { }
 
   ngOnInit(): void {
-    this.loginForm = this.formBuilder.group(
-      {
-        email: new FormControl('', [Validators.required, Validators.email]),
-        password: new FormControl('', [Validators.required, Validators.minLength(6)])
-      })
+    this.loginForm = this.formBuilder.group({
+      email: new FormControl('', [Validators.required, Validators.email]),
+      password: new FormControl('', [Validators.required, Validators.minLength(6)])
+    });
+  }
 
-    if (this.tokenStorage.getToken()) {
-      this.isLoggedIn = true;
+  formControl(control: string) {
+    return this.loginForm.get(control);
+  }
+
+  login(): void {
+    if (this.loginForm.invalid || this.isSubmitting) {
+      this.loginForm.markAllAsTouched();
+      return;
     }
-  }
 
-  formControl(control: any) {
-    return this.loginForm.get(control)
-  }
-
-  login() {
-
+    this.isSubmitting = true;
     this.loginInfo = new AuthLoginInfo(
       this.loginForm.value.email,
       this.loginForm.value.password,
       true,
     );
-    this.isLoggedIn = true;
 
-    if (this.loginForm.invalid) {
-      return;
-    }
-
-    this.authService.auth(this.loginInfo).subscribe(data => {
-      this.tokenStorage.saveToken(data.idToken);
-      this.tokenStorage.saveUserEmail(data.email);
-      this.tokenStorage.saveUserId(data.localId);
-      this.isLoggedIn = true;
-      this.reloadPage();
+    this.authService.auth(this.loginInfo).subscribe({
+      next: (data) => {
+        this.authState.setSession(data.idToken, data.email, data.localId);
+        this.isSubmitting = false;
+        this.dialogRef.close(true);
+      },
+      error: () => {
+        this.isSubmitting = false;
+      }
     });
   }
 
-  reloadPage() {
-    window.location.reload();
-  }
-
-  closeDialog() {
+  closeDialog(): void {
     this.dialogRef.close();
   }
 
-  openDialogReg() {
+  openDialogReg(): void {
     const dialogConfig = new MatDialogConfig();
-
     dialogConfig.disableClose = true;
     dialogConfig.autoFocus = true;
-    dialogConfig.panelClass = 'register-custom-styles'
-
-    const dialogRef = this.dialog.open(RegisterComponent, dialogConfig);
+    dialogConfig.panelClass = 'register-custom-styles';
+    this.dialog.open(RegisterComponent, dialogConfig);
   }
 
-  regNewUser() {
+  regNewUser(): void {
     this.closeDialog();
     this.openDialogReg();
   }
-
 }

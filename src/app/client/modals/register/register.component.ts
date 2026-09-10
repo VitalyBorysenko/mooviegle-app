@@ -1,30 +1,42 @@
-import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatDialogRef } from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Subscription } from 'rxjs';
+import { AuthStateService } from 'src/app/auth/auth-state.service';
 import { AuthService } from 'src/app/auth/auth.service';
 import { SignUpInfo } from 'src/app/auth/signup-info';
-import { TokenStorageService } from 'src/app/auth/token-storage.service';
 
 @Component({
+  standalone: true,
   selector: 'app-register',
   templateUrl: './register.component.html',
-  styleUrls: ['./register.component.scss']
+  styleUrls: ['./register.component.scss'],
+  imports: [
+    ReactiveFormsModule,
+    MatCardModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+  ],
 })
-export class RegisterComponent implements OnInit {
-  isLoggedIn = false;
+export class RegisterComponent implements OnInit, OnDestroy {
   registerForm!: FormGroup;
+  isSubmitting = false;
   signupInfo!: SignUpInfo;
-  private _subs: Subscription = new Subscription();
+
+  private readonly _subs = new Subscription();
 
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
-    private tokenStorage: TokenStorageService,
+    private authState: AuthStateService,
     public _snackBar: MatSnackBar,
     public dialogRef: MatDialogRef<RegisterComponent>,
-    private dialog: MatDialog,
   ) { }
 
   ngOnInit(): void {
@@ -35,12 +47,12 @@ export class RegisterComponent implements OnInit {
     this._subs.unsubscribe();
   }
 
-  createForm() {
+  createForm(): void {
     this.registerForm = this.fb.group(
       {
         email: new FormControl('', [Validators.required, Validators.email]),
         password: new FormControl('', [Validators.required, Validators.minLength(6)]),
-        confirmPassword: new FormControl('', [Validators.required],)
+        confirmPassword: new FormControl('', [Validators.required]),
       },
       { validator: this.passwordConfirming('password', 'confirmPassword') }
     );
@@ -51,7 +63,7 @@ export class RegisterComponent implements OnInit {
       const control = formGroup.controls[password];
       const matchingControl = formGroup.controls[confirmPassword];
 
-      if (matchingControl.errors && !matchingControl.errors.invalid) {
+      if (matchingControl.errors && !matchingControl.errors['invalid']) {
         return;
       }
 
@@ -60,53 +72,53 @@ export class RegisterComponent implements OnInit {
       } else {
         matchingControl.setErrors(null);
       }
-    }
+    };
   }
 
   formControl(control: string) {
-    return this.registerForm.get(control)
+    return this.registerForm.get(control);
   }
 
-  closeDialog() {
+  closeDialog(): void {
     this.dialogRef.close();
   }
 
-  authNewUser() {
-    if (this.registerForm.valid) {
-      this.signupInfo = new SignUpInfo(
-        this.registerForm.value.email,
-        this.registerForm.value.password,
-        true);
-      this._subs.add(this.authService.signUp(this.signupInfo).subscribe(data => {
-
-        if (data.idToken) {
-          this._snackBar.open('Реєстрація пройшла успішно.', 'Х', {
-            duration: 5000,
-            horizontalPosition: 'center',
-            verticalPosition: 'top',
-          });
-          this.dialogRef.close();
-        }
-        this.tokenStorage.saveToken(data.idToken);
-        this.tokenStorage.saveUserEmail(data.email);
-        this.tokenStorage.saveUserId(data.localId);
-        this.isLoggedIn = true;
-
-        this.reloadPage()
-
-      }));
-    }
-
-    else {
+  authNewUser(): void {
+    if (this.registerForm.invalid || this.isSubmitting) {
+      this.registerForm.markAllAsTouched();
       this._snackBar.open('Заповніть форму', 'Х', {
         duration: 5000,
         horizontalPosition: 'center',
         verticalPosition: 'top',
       });
+      return;
     }
-  }
 
-  reloadPage() {
-    window.location.reload();
+    this.isSubmitting = true;
+    this.signupInfo = new SignUpInfo(
+      this.registerForm.value.email,
+      this.registerForm.value.password,
+      true
+    );
+
+    this._subs.add(this.authService.signUp(this.signupInfo).subscribe({
+      next: (data) => {
+        this.isSubmitting = false;
+        if (!data.idToken) {
+          return;
+        }
+
+        this.authState.setSession(data.idToken, data.email, data.localId);
+        this._snackBar.open('Реєстрація пройшла успішно.', 'Х', {
+          duration: 5000,
+          horizontalPosition: 'center',
+          verticalPosition: 'top',
+        });
+        this.dialogRef.close(true);
+      },
+      error: () => {
+        this.isSubmitting = false;
+      }
+    }));
   }
 }

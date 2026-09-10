@@ -3,6 +3,7 @@ export interface Genres {
   name?: string;
 }
 export class Movie {
+  firebaseKey?: string;
   user_id?: string;
   backdrop_path?: string;
   poster_path?: string;

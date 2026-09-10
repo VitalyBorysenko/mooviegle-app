@@ -1,43 +1,49 @@
+import { AsyncPipe, DatePipe, UpperCasePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { Subscription } from 'rxjs';
-import { TokenStorageService } from 'src/app/auth/token-storage.service';
+import { RouterLink } from '@angular/router';
+import { Observable, of } from 'rxjs';
+import { catchError, map, startWith } from 'rxjs/operators';
+import { AuthStateService } from 'src/app/auth/auth-state.service';
+import { Movie } from 'src/app/models/model.Movie';
 import { CollectionService } from 'src/app/services/collection.service';
+import { TmdbPosterPipe } from 'src/app/shared/pipes/tmdb-poster.pipe';
+
+interface CollectionViewModel {
+  movies: Movie[];
+  isLoading: boolean;
+  loadError: boolean;
+}
 
 @Component({
+  standalone: true,
   selector: 'app-collection',
   templateUrl: './collection.component.html',
-  styleUrls: ['./collection.component.scss']
+  styleUrls: ['./collection.component.scss'],
+  imports: [AsyncPipe, DatePipe, UpperCasePipe, RouterLink, TmdbPosterPipe],
 })
 export class CollectionComponent implements OnInit {
+  viewModel$!: Observable<CollectionViewModel>;
 
-  collectionList!: any[];
   constructor(
     private collectionService: CollectionService,
-    private tokenStorage: TokenStorageService,
+    public authState: AuthStateService,
   ) { }
 
   ngOnInit(): void {
-    this.loadCollection();
-  }
-
-  private _subs: Subscription = new Subscription();
-
-  ngOnDestroy(): void {
-    this._subs.unsubscribe();
-  }
-
-  loadCollection() {
-    if (this.tokenStorage.getToken()) {
-      this._subs.add(this.collectionService.getCollection().subscribe((data: any) => {
-        this.collectionList = data.filter((col: any) => col.user_id === this.tokenStorage.getUserId()
-        );
-      }));
+    if (!this.authState.isLoggedIn()) {
+      this.viewModel$ = of({ movies: [], isLoading: false, loadError: false });
+      return;
     }
-  }
 
-  getImgUrl(index: number) {
-    const imgSrc = `https://image.tmdb.org/t/p/w500`;
-    return imgSrc + this.collectionList[index].poster_path;
+    const userId = this.authState.getUserId();
+    this.viewModel$ = this.collectionService.getCollection().pipe(
+      map((data) => ({
+        movies: userId ? data.filter((movie) => movie.user_id === userId) : data,
+        isLoading: false,
+        loadError: false,
+      })),
+      startWith({ movies: [], isLoading: true, loadError: false }),
+      catchError(() => of({ movies: [], isLoading: false, loadError: true })),
+    );
   }
-
 }
