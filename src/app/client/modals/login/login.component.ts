@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialog, MatDialogConfig, MatDialogRef } from '@angular/material/dialog';
@@ -8,13 +8,13 @@ import { MatInputModule } from '@angular/material/input';
 import { AuthStateService } from 'src/app/auth/auth-state.service';
 import { AuthLoginInfo } from 'src/app/auth/login-info';
 import { AuthService } from 'src/app/auth/auth.service';
-import { RegisterComponent } from '../register/register.component';
 
 @Component({
   standalone: true,
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,
     MatCardModule,
@@ -23,26 +23,19 @@ import { RegisterComponent } from '../register/register.component';
     MatButtonModule,
   ],
 })
-export class LoginComponent implements OnInit {
-  loginForm!: FormGroup;
-  isSubmitting = false;
+export class LoginComponent {
+  private readonly dialog = inject(MatDialog);
+  private readonly formBuilder = inject(FormBuilder);
+  private readonly dialogRef = inject(MatDialogRef<LoginComponent>);
+  private readonly authService = inject(AuthService);
+  private readonly authState = inject(AuthStateService);
 
-  private loginInfo!: AuthLoginInfo;
+  readonly loginForm = this.formBuilder.group({
+    email: ['', [Validators.required, Validators.email]],
+    password: ['', [Validators.required, Validators.minLength(6)]],
+  });
 
-  constructor(
-    private dialog: MatDialog,
-    private formBuilder: FormBuilder,
-    public dialogRef: MatDialogRef<LoginComponent>,
-    private authService: AuthService,
-    private authState: AuthStateService,
-  ) { }
-
-  ngOnInit(): void {
-    this.loginForm = this.formBuilder.group({
-      email: new FormControl('', [Validators.required, Validators.email]),
-      password: new FormControl('', [Validators.required, Validators.minLength(6)])
-    });
-  }
+  private isSubmitting = false;
 
   formControl(control: string) {
     return this.loginForm.get(control);
@@ -55,13 +48,13 @@ export class LoginComponent implements OnInit {
     }
 
     this.isSubmitting = true;
-    this.loginInfo = new AuthLoginInfo(
-      this.loginForm.value.email,
-      this.loginForm.value.password,
+    const loginInfo = new AuthLoginInfo(
+      this.loginForm.value.email ?? '',
+      this.loginForm.value.password ?? '',
       true,
     );
 
-    this.authService.auth(this.loginInfo).subscribe({
+    this.authService.auth(loginInfo).subscribe({
       next: (data) => {
         this.authState.setSession(data.idToken, data.email, data.localId);
         this.isSubmitting = false;
@@ -77,16 +70,13 @@ export class LoginComponent implements OnInit {
     this.dialogRef.close();
   }
 
-  openDialogReg(): void {
+  async regNewUser(): Promise<void> {
+    this.closeDialog();
+    const { RegisterComponent } = await import('../register/register.component');
     const dialogConfig = new MatDialogConfig();
     dialogConfig.disableClose = true;
     dialogConfig.autoFocus = true;
     dialogConfig.panelClass = 'register-custom-styles';
     this.dialog.open(RegisterComponent, dialogConfig);
-  }
-
-  regNewUser(): void {
-    this.closeDialog();
-    this.openDialogReg();
   }
 }

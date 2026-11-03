@@ -1,7 +1,7 @@
+import { provideHttpClient } from '@angular/common/http';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { CollectionService } from './collection.service';
 import { environment } from 'src/environments/environment';
 
@@ -11,7 +11,8 @@ describe('CollectionService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule, MatSnackBarModule, BrowserAnimationsModule],
+      imports: [MatSnackBarModule],
+      providers: [provideHttpClient(), provideHttpClientTesting()],
     });
     service = TestBed.inject(CollectionService);
     httpMock = TestBed.inject(HttpTestingController);

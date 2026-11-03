@@ -1,20 +1,36 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './auth/auth.guard';
 import { LoadClientComponent } from './client/load-client/load-client.component';
-import { CardMovieComponent } from './client/pages/card-movie/card-movie.component';
-import { CollectionComponent } from './client/pages/collection/collection.component';
-import { HomeComponent } from './client/pages/home/home.component';
-import { SearchComponent } from './client/pages/search/search.component';
 
 export const routes: Routes = [
   {
     path: '',
     component: LoadClientComponent,
     children: [
-      { path: '', component: HomeComponent, pathMatch: 'full' },
-      { path: 'collection', component: CollectionComponent, canActivate: [authGuard], pathMatch: 'full' },
-      { path: 'movie/:cardMovieId', component: CardMovieComponent },
-      { path: 'search', component: SearchComponent, pathMatch: 'full' },
+      {
+        path: '',
+        loadComponent: () =>
+          import('./client/pages/home/home.component').then((m) => m.HomeComponent),
+        pathMatch: 'full',
+      },
+      {
+        path: 'collection',
+        loadComponent: () =>
+          import('./client/pages/collection/collection.component').then((m) => m.CollectionComponent),
+        canActivate: [authGuard],
+        pathMatch: 'full',
+      },
+      {
+        path: 'movie/:cardMovieId',
+        loadComponent: () =>
+          import('./client/pages/card-movie/card-movie.component').then((m) => m.CardMovieComponent),
+      },
+      {
+        path: 'search',
+        loadComponent: () =>
+          import('./client/pages/search/search.component').then((m) => m.SearchComponent),
+        pathMatch: 'full',
+      },
       { path: '**', redirectTo: '' },
     ],
   },

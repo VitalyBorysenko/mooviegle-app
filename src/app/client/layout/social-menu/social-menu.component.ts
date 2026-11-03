@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faFacebookF, faInstagram, faTwitter } from '@fortawesome/free-brands-svg-icons';
 
@@ -7,6 +7,7 @@ import { faFacebookF, faInstagram, faTwitter } from '@fortawesome/free-brands-sv
   selector: 'app-social-menu',
   templateUrl: './social-menu.component.html',
   styleUrls: ['./social-menu.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [FontAwesomeModule],
 })
 export class SocialMenuComponent {

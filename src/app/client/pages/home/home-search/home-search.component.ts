@@ -1,26 +1,26 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faFilm } from '@fortawesome/free-solid-svg-icons';
+import { normalizeSearchText } from 'src/app/shared/utils/search-text';
 
 @Component({
   standalone: true,
   selector: 'app-home-search',
   templateUrl: './home-search.component.html',
   styleUrls: ['./home-search.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [FormsModule, FontAwesomeModule],
 })
 export class HomeSearchComponent {
-  filmIcon = faFilm;
-  searchText = '';
+  private readonly router = inject(Router);
 
-  constructor(
-    private router: Router,
-  ) { }
+  readonly filmIcon = faFilm;
+  readonly searchText = signal('');
 
-  Search(searchValue: string): void {
-    const trimmed = searchValue?.trim();
+  search(): void {
+    const trimmed = normalizeSearchText(this.searchText());
     if (!trimmed) {
       return;
     }

@@ -1,15 +1,15 @@
-@if (viewModel$ | async; as vm) {
-  @if (vm.isLoading) {
+@let vm = viewModel();
+@switch (vm.status) {
+  @case ('loading') {
     <p class="slider-state">Завантаження фільмів...</p>
   }
-  @if (!vm.isLoading && vm.loadError) {
+  @case ('error') {
     <p class="slider-state slider-state--error">Не вдалося завантажити фільми</p>
   }
-  @if (!vm.isLoading && !vm.loadError && !vm.movies.length) {
+  @case ('empty') {
     <p class="slider-state">Фільми не знайдено</p>
   }
-
-  @if (!vm.isLoading && vm.movies.length) {
+  @case ('ready') {
     <div class="slider-container">
       <button type="button" class="arrow" (click)="moveLeft()" aria-label="Попередні фільми">
         <fa-icon [icon]="arrowLeft"></fa-icon>
@@ -35,6 +35,8 @@
                 </div>
               </div>
             </a>
+          } @empty {
+            <p class="slider-state">Фільми не знайдено</p>
           }
         </div>
       </div>
