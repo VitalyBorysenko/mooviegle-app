@@ -2,9 +2,18 @@
   <div class="title">
     <h3 class="category-title">Популярні фільми</h3>
   </div>
-  <app-movie-slider [loadMovies]="loadPopular"></app-movie-slider>
+  @defer (on viewport) {
+    <app-movie-slider [loadMovies]="loadPopular"></app-movie-slider>
+  } @placeholder {
+    <p class="slider-placeholder">Завантаження слайдера...</p>
+  }
+
   <div class="title">
     <h3 class="category-title">Зараз в прокаті</h3>
   </div>
-  <app-movie-slider [loadMovies]="loadNowPlaying"></app-movie-slider>
+  @defer (on viewport) {
+    <app-movie-slider [loadMovies]="loadNowPlaying"></app-movie-slider>
+  } @placeholder {
+    <p class="slider-placeholder">Завантаження слайдера...</p>
+  }
 </div>

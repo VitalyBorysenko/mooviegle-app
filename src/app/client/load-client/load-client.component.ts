@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { ClientFooterComponent } from '../layout/client-footer/client-footer.component';
 import { ClientHeaderComponent } from '../layout/client-header/client-header.component';
@@ -8,6 +8,7 @@ import { ClientHeaderComponent } from '../layout/client-header/client-header.com
   selector: 'app-load-client',
   templateUrl: './load-client.component.html',
   styleUrls: ['./load-client.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [ClientHeaderComponent, ClientFooterComponent, RouterOutlet],
 })
 export class LoadClientComponent { }

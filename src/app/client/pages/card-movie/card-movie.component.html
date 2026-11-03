@@ -1,42 +1,52 @@
 <app-home-search></app-home-search>
 
-@if (viewModel$ | async; as vm) {
-  @if (vm.isLoading) {
+@let vm = viewModel();
+@switch (vm.status) {
+  @case ('loading') {
     <p class="movie-state">Завантаження фільму...</p>
   }
-  @if (!vm.isLoading && vm.loadError) {
+  @case ('error') {
     <p class="movie-state movie-state--error">Не вдалося завантажити фільм</p>
   }
-
-  @if (!vm.isLoading && vm.movieData) {
-    <div class="inner">
-      <div class="container" [style.background-image]="vm.movieData.backdrop_path ? 'url(' + (vm.movieData.backdrop_path | tmdbPoster) + ')' : 'none'">
-        <div class="blur">
-          <div class="card-container">
-            @if (vm.movieData.poster_path) {
-              <img class="movie-img" [src]="vm.movieData.poster_path | tmdbPoster" [alt]="vm.movieData.title">
-            } @else {
-              <div class="movie-img movie-img--placeholder" aria-hidden="true"></div>
-            }
-
-            <div class="content">
-              <h4 class="title">{{ vm.movieData.title }} ({{ vm.movieData.original_title }})</h4>
-              @if (vm.movieData.release_date) {
-                <p class="release">Прем'єра: <span>{{ vm.movieData.release_date | date:'dd.MM.yyyy' }}</span></p>
+  @case ('ready') {
+    @if (vm.movieData; as movieData) {
+      <div class="inner">
+        <div class="container" [style.background-image]="movieData.backdrop_path ? 'url(' + (movieData.backdrop_path | tmdbPoster) + ')' : 'none'">
+          <div class="blur">
+            <div class="card-container">
+              @if (movieData.poster_path) {
+                <img class="movie-img" [src]="movieData.poster_path | tmdbPoster" [alt]="movieData.title">
+              } @else {
+                <div class="movie-img movie-img--placeholder" aria-hidden="true"></div>
               }
-              <p class="genre">Жанр:
-                @for (genre of vm.movieData.genres; track genre.id) {
-                  <span>{{ genre.name }} </span>
-                }
-              </p>
 
-              <p class="vote">IMDB: <span>{{ vm.movieData.vote_average }}</span></p>
-              <p class="description">Опис: <span>{{ vm.movieData.overview }}</span></p>
-              <button type="button" class="add-movie" (click)="addToCollection(vm)" [disabled]="vm.isInCollection || collectionAdded">Додати до колекції</button>
+              <div class="content">
+                <h4 class="title">{{ movieData.title }} ({{ movieData.original_title }})</h4>
+                @if (movieData.release_date) {
+                  <p class="release">Прем'єра: <span>{{ movieData.release_date | date:'dd.MM.yyyy' }}</span></p>
+                }
+                <p class="genre">Жанр:
+                  @for (genre of movieData.genres; track genre.id) {
+                    <span>{{ genre.name }} </span>
+                  } @empty {
+                    <span>Невідомо</span>
+                  }
+                </p>
+
+                <p class="vote">IMDB: <span>{{ movieData.vote_average }}</span></p>
+                <p class="description">Опис: <span>{{ movieData.overview }}</span></p>
+                <button
+                  type="button"
+                  class="add-movie"
+                  (click)="addToCollection()"
+                  [disabled]="vm.isInCollection || collectionAdded()">
+                  Додати до колекції
+                </button>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    }
   }
 }

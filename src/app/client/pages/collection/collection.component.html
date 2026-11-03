@@ -1,14 +1,17 @@
 <h2 class="collection-title">Моя колекція</h2>
 
-@if (viewModel$ | async; as vm) {
-  @if (vm.isLoading) {
+@let vm = viewModel();
+@switch (vm.status) {
+  @case ('loading') {
     <p class="collection-state">Завантаження колекції...</p>
   }
-  @if (!vm.isLoading && vm.loadError) {
+  @case ('error') {
     <p class="collection-state collection-state--error">Не вдалося завантажити колекцію</p>
   }
-
-  @if (!vm.isLoading && vm.movies.length > 0) {
+  @case ('empty') {
+    <p class="nocollection">У Вашій колекції нічого немає</p>
+  }
+  @case ('ready') {
     <div class="collection-container">
       @for (movie of vm.movies; track movie.id ?? $index) {
         <div class="item">
@@ -38,11 +41,9 @@
             </div>
           </a>
         </div>
+      } @empty {
+        <p class="nocollection">У Вашій колекції нічого немає</p>
       }
     </div>
-  }
-
-  @if (!vm.isLoading && !vm.loadError && vm.movies.length === 0) {
-    <p class="nocollection">У Вашій колекції нічого немає</p>
   }
 }

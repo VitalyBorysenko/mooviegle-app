@@ -1,10 +1,11 @@
-import { Injectable, computed, signal } from '@angular/core';
+import { Injectable, computed, inject, signal } from '@angular/core';
 import { TokenStorageService } from './token-storage.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthStateService {
+  private readonly tokenStorage = inject(TokenStorageService);
   private readonly tokenSignal = signal<string | null>(null);
   private readonly emailSignal = signal<string | null>(null);
   private readonly userIdSignal = signal<string | null>(null);
@@ -12,7 +13,7 @@ export class AuthStateService {
   readonly isLoggedIn = computed(() => !!this.tokenSignal());
   readonly email = this.emailSignal.asReadonly();
 
-  constructor(private tokenStorage: TokenStorageService) {
+  constructor() {
     this.syncFromStorage();
   }
 

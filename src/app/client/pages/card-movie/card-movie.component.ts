@@ -1,5 +1,6 @@
-import { AsyncPipe, DatePipe } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { DatePipe } from '@angular/common';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute } from '@angular/router';
 import { Observable, of } from 'rxjs';
@@ -12,10 +13,11 @@ import { TmdbService } from 'src/app/services/tmdb.service';
 import { TmdbPosterPipe } from 'src/app/shared/pipes/tmdb-poster.pipe';
 import { HomeSearchComponent } from '../home/home-search/home-search.component';
 
+type MovieCardStatus = 'loading' | 'error' | 'ready';
+
 interface MovieCardViewModel {
   movieData?: TmdbMovieDetails;
-  isLoading: boolean;
-  loadError: boolean;
+  status: MovieCardStatus;
   isInCollection: boolean;
 }
 
@@ -24,35 +26,32 @@ interface MovieCardViewModel {
   selector: 'app-card-movie',
   templateUrl: './card-movie.component.html',
   styleUrls: ['./card-movie.component.scss'],
-  imports: [AsyncPipe, DatePipe, HomeSearchComponent, TmdbPosterPipe],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [DatePipe, HomeSearchComponent, TmdbPosterPipe],
 })
-export class CardMovieComponent implements OnInit {
-  viewModel$!: Observable<MovieCardViewModel>;
-  collectionAdded = false;
+export class CardMovieComponent {
+  private readonly tmdbService = inject(TmdbService);
+  private readonly collectionService = inject(CollectionService);
+  private readonly route = inject(ActivatedRoute);
+  private readonly authState = inject(AuthStateService);
+  private readonly snackBar = inject(MatSnackBar);
 
-  constructor(
-    private tmdbService: TmdbService,
-    public collectionService: CollectionService,
-    private route: ActivatedRoute,
-    private authState: AuthStateService,
-    public _snackBar: MatSnackBar,
-  ) {
-  }
+  readonly collectionAdded = signal(false);
 
-  ngOnInit(): void {
-    this.viewModel$ = this.route.params.pipe(
-      tap(() => {
-        this.collectionAdded = false;
-      }),
+  readonly viewModel = toSignal(
+    this.route.params.pipe(
+      tap(() => this.collectionAdded.set(false)),
       map((params) => +params['cardMovieId']),
       switchMap((movieId) => this.loadMovieCard(movieId)),
-    );
-  }
+    ),
+    { initialValue: this.createInitialViewModel() },
+  );
 
-  addToCollection(viewModel: MovieCardViewModel): void {
-    if (!this.authState.isLoggedIn() || !viewModel.movieData || viewModel.isInCollection || this.collectionAdded) {
+  addToCollection(): void {
+    const viewModel = this.viewModel();
+    if (!this.authState.isLoggedIn() || !viewModel.movieData || viewModel.isInCollection || this.collectionAdded()) {
       if (!this.authState.isLoggedIn()) {
-        this._snackBar.open('Увійдіть, щоб додати фільм до колекції', 'Х', {
+        this.snackBar.open('Увійдіть, щоб додати фільм до колекції', 'Х', {
           duration: 3000,
           horizontalPosition: 'center',
           verticalPosition: 'top',
@@ -80,12 +79,12 @@ export class CardMovieComponent implements OnInit {
 
     this.collectionService.addMovie(movie).subscribe({
       next: () => {
-        this._snackBar.open('Успішно додано до колекції', 'Х', {
+        this.snackBar.open('Успішно додано до колекції', 'Х', {
           duration: 3000,
           horizontalPosition: 'center',
           verticalPosition: 'top',
         });
-        this.collectionAdded = true;
+        this.collectionAdded.set(true);
       },
       error: () => {
         // Помилку вже показує CollectionService.
@@ -93,19 +92,22 @@ export class CardMovieComponent implements OnInit {
     });
   }
 
+  private createInitialViewModel(): MovieCardViewModel {
+    return { status: 'loading', isInCollection: false };
+  }
+
   private loadMovieCard(movieId: number): Observable<MovieCardViewModel> {
     return this.tmdbService.getMovieById(movieId).pipe(
       switchMap((movieData) => this.withCollectionStatus(movieData)),
-      startWith({ isLoading: true, loadError: false, isInCollection: false }),
-      catchError(() => of({ isLoading: false, loadError: true, isInCollection: false })),
+      startWith(this.createInitialViewModel()),
+      catchError(() => of<MovieCardViewModel>({ status: 'error', isInCollection: false })),
     );
   }
 
   private withCollectionStatus(movieData: TmdbMovieDetails): Observable<MovieCardViewModel> {
     const baseViewModel: MovieCardViewModel = {
       movieData,
-      isLoading: false,
-      loadError: false,
+      status: 'ready',
       isInCollection: false,
     };
 

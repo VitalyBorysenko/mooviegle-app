@@ -1,18 +1,19 @@
-import { AsyncPipe, DatePipe, UpperCasePipe } from '@angular/common';
-import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import { DatePipe, UpperCasePipe } from '@angular/common';
+import { ChangeDetectionStrategy, Component, ElementRef, input, viewChild } from '@angular/core';
+import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faCaretLeft, faCaretRight } from '@fortawesome/free-solid-svg-icons';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { Observable, of } from 'rxjs';
-import { catchError, map, startWith } from 'rxjs/operators';
+import { catchError, map, startWith, switchMap } from 'rxjs/operators';
 import { TmdbMovieSummary } from 'src/app/models/tmdb/tmdb.models';
 import { TmdbPosterPipe } from '../../pipes/tmdb-poster.pipe';
+import { AsyncViewStatus, toAsyncViewStatus } from '../../utils/async-view-status';
 
 interface SliderViewModel {
   movies: TmdbMovieSummary[];
-  isLoading: boolean;
-  loadError: boolean;
+  status: AsyncViewStatus;
 }
 
 @Component({
@@ -20,8 +21,8 @@ interface SliderViewModel {
   selector: 'app-movie-slider',
   templateUrl: './movie-slider.component.html',
   styleUrls: ['./movie-slider.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    AsyncPipe,
     DatePipe,
     UpperCasePipe,
     RouterLink,
@@ -30,27 +31,32 @@ interface SliderViewModel {
     TmdbPosterPipe,
   ],
 })
-export class MovieSliderComponent implements OnInit {
-  @Input({ required: true }) loadMovies!: () => Observable<{ results: TmdbMovieSummary[] }>;
+export class MovieSliderComponent {
+  readonly loadMovies = input.required<() => Observable<{ results: TmdbMovieSummary[] }>>();
 
-  viewModel$!: Observable<SliderViewModel>;
-  arrowLeft = faCaretLeft;
-  arrowRight = faCaretRight;
+  readonly arrowLeft = faCaretLeft;
+  readonly arrowRight = faCaretRight;
 
-  @ViewChild('track', { static: false })
-  track!: ElementRef<HTMLElement>;
+  private readonly track = viewChild<ElementRef<HTMLElement>>('track');
 
-  ngOnInit(): void {
-    this.viewModel$ = this.loadMovies().pipe(
-      map((data) => ({
-        movies: data.results ?? [],
-        isLoading: false,
-        loadError: false,
-      })),
-      startWith({ movies: [], isLoading: true, loadError: false }),
-      catchError(() => of({ movies: [], isLoading: false, loadError: true })),
-    );
-  }
+  readonly viewModel = toSignal(
+    toObservable(this.loadMovies).pipe(
+      switchMap((loadMovies) =>
+        loadMovies().pipe(
+          map((data) => {
+            const movies = data.results ?? [];
+            return {
+              movies,
+              status: toAsyncViewStatus(false, false, movies.length > 0),
+            };
+          }),
+          startWith({ movies: [], status: 'loading' } satisfies SliderViewModel),
+          catchError(() => of({ movies: [], status: 'error' } satisfies SliderViewModel)),
+        ),
+      ),
+    ),
+    { initialValue: { movies: [], status: 'loading' } satisfies SliderViewModel },
+  );
 
   moveRight(): void {
     this.scrollTrack(1);
@@ -61,7 +67,7 @@ export class MovieSliderComponent implements OnInit {
   }
 
   private scrollTrack(direction: 1 | -1): void {
-    const track = this.track?.nativeElement;
+    const track = this.track()?.nativeElement;
     if (!track) {
       return;
     }

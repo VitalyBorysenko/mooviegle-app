@@ -1,12 +1,12 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { Subscription } from 'rxjs';
 import { AuthStateService } from 'src/app/auth/auth-state.service';
 import { AuthService } from 'src/app/auth/auth.service';
 import { SignUpInfo } from 'src/app/auth/signup-info';
@@ -16,6 +16,7 @@ import { SignUpInfo } from 'src/app/auth/signup-info';
   selector: 'app-register',
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,
     MatCardModule,
@@ -24,56 +25,24 @@ import { SignUpInfo } from 'src/app/auth/signup-info';
     MatButtonModule,
   ],
 })
-export class RegisterComponent implements OnInit, OnDestroy {
-  registerForm!: FormGroup;
-  isSubmitting = false;
-  signupInfo!: SignUpInfo;
+export class RegisterComponent {
+  private readonly formBuilder = inject(FormBuilder);
+  private readonly authService = inject(AuthService);
+  private readonly authState = inject(AuthStateService);
+  private readonly snackBar = inject(MatSnackBar);
+  private readonly dialogRef = inject(MatDialogRef<RegisterComponent>);
+  private readonly destroyRef = inject(DestroyRef);
 
-  private readonly _subs = new Subscription();
+  readonly registerForm = this.formBuilder.group(
+    {
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', [Validators.required, Validators.minLength(6)]],
+      confirmPassword: ['', [Validators.required]],
+    },
+    { validators: this.passwordConfirming('password', 'confirmPassword') },
+  );
 
-  constructor(
-    private fb: FormBuilder,
-    private authService: AuthService,
-    private authState: AuthStateService,
-    public _snackBar: MatSnackBar,
-    public dialogRef: MatDialogRef<RegisterComponent>,
-  ) { }
-
-  ngOnInit(): void {
-    this.createForm();
-  }
-
-  ngOnDestroy(): void {
-    this._subs.unsubscribe();
-  }
-
-  createForm(): void {
-    this.registerForm = this.fb.group(
-      {
-        email: new FormControl('', [Validators.required, Validators.email]),
-        password: new FormControl('', [Validators.required, Validators.minLength(6)]),
-        confirmPassword: new FormControl('', [Validators.required]),
-      },
-      { validator: this.passwordConfirming('password', 'confirmPassword') }
-    );
-  }
-
-  passwordConfirming(password: string, confirmPassword: string) {
-    return (formGroup: FormGroup) => {
-      const control = formGroup.controls[password];
-      const matchingControl = formGroup.controls[confirmPassword];
-
-      if (matchingControl.errors && !matchingControl.errors['invalid']) {
-        return;
-      }
-
-      if (control.value !== matchingControl.value) {
-        matchingControl.setErrors({ invalid: true });
-      } else {
-        matchingControl.setErrors(null);
-      }
-    };
-  }
+  private isSubmitting = false;
 
   formControl(control: string) {
     return this.registerForm.get(control);
@@ -86,7 +55,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
   authNewUser(): void {
     if (this.registerForm.invalid || this.isSubmitting) {
       this.registerForm.markAllAsTouched();
-      this._snackBar.open('Заповніть форму', 'Х', {
+      this.snackBar.open('Заповніть форму', 'Х', {
         duration: 5000,
         horizontalPosition: 'center',
         verticalPosition: 'top',
@@ -95,13 +64,15 @@ export class RegisterComponent implements OnInit, OnDestroy {
     }
 
     this.isSubmitting = true;
-    this.signupInfo = new SignUpInfo(
-      this.registerForm.value.email,
-      this.registerForm.value.password,
-      true
+    const signupInfo = new SignUpInfo(
+      this.registerForm.value.email ?? '',
+      this.registerForm.value.password ?? '',
+      true,
     );
 
-    this._subs.add(this.authService.signUp(this.signupInfo).subscribe({
+    this.authService.signUp(signupInfo).pipe(
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe({
       next: (data) => {
         this.isSubmitting = false;
         if (!data.idToken) {
@@ -109,7 +80,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
         }
 
         this.authState.setSession(data.idToken, data.email, data.localId);
-        this._snackBar.open('Реєстрація пройшла успішно.', 'Х', {
+        this.snackBar.open('Реєстрація пройшла успішно.', 'Х', {
           duration: 5000,
           horizontalPosition: 'center',
           verticalPosition: 'top',
@@ -119,6 +90,26 @@ export class RegisterComponent implements OnInit, OnDestroy {
       error: () => {
         this.isSubmitting = false;
       }
-    }));
+    });
+  }
+
+  private passwordConfirming(password: string, confirmPassword: string) {
+    return (formGroup: AbstractControl) => {
+      const group = formGroup as FormGroup;
+      const control = group.controls[password];
+      const matchingControl = group.controls[confirmPassword];
+
+      if (matchingControl.errors && !matchingControl.errors['invalid']) {
+        return null;
+      }
+
+      if (control.value !== matchingControl.value) {
+        matchingControl.setErrors({ invalid: true });
+      } else {
+        matchingControl.setErrors(null);
+      }
+
+      return null;
+    };
   }
 }

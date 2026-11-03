@@ -1,15 +1,15 @@
-@if (viewModel$ | async; as vm) {
-  @if (vm.isLoading) {
+@let vm = viewModel();
+@switch (vm.status) {
+  @case ('loading') {
     <p class="search-state">Завантаження результатів...</p>
   }
-  @if (!vm.isLoading && vm.loadError) {
+  @case ('error') {
     <p class="search-state search-state--error">Не вдалося виконати пошук</p>
   }
-  @if (!vm.isLoading && !vm.loadError && vm.searchText && !vm.movies.length) {
+  @case ('empty') {
     <p class="search-state">За запитом «{{ vm.searchText }}» нічого не знайдено</p>
   }
-
-  @if (!vm.isLoading && vm.movies.length) {
+  @case ('ready') {
     <div class="search-container">
       @for (movie of vm.movies; track movie.id) {
         <div class="item">
@@ -39,6 +39,8 @@
             </div>
           </a>
         </div>
+      } @empty {
+        <p class="search-state">За запитом «{{ vm.searchText }}» нічого не знайдено</p>
       }
     </div>
   }

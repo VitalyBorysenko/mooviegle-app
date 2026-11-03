@@ -1,5 +1,6 @@
+import { provideHttpClient } from '@angular/common/http';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { TmdbService } from './tmdb.service';
 import { environment } from 'src/environments/environment';
 
@@ -9,7 +10,7 @@ describe('TmdbService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule],
+      providers: [provideHttpClient(), provideHttpClientTesting()],
     });
     service = TestBed.inject(TmdbService);
     httpMock = TestBed.inject(HttpTestingController);

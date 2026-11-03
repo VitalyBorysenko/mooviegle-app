@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MovieSliderComponent } from 'src/app/shared/components/movie-slider/movie-slider.component';
 import { TmdbService } from 'src/app/services/tmdb.service';
 
@@ -7,11 +7,12 @@ import { TmdbService } from 'src/app/services/tmdb.service';
   selector: 'app-categories-list',
   templateUrl: './categories-list.component.html',
   styleUrls: ['./categories-list.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [MovieSliderComponent],
 })
 export class CategoriesListComponent {
-  constructor(private tmdbService: TmdbService) { }
+  private readonly tmdbService = inject(TmdbService);
 
-  loadPopular = () => this.tmdbService.getPopular();
-  loadNowPlaying = () => this.tmdbService.getNowPlaying();
+  readonly loadPopular = () => this.tmdbService.getPopular();
+  readonly loadNowPlaying = () => this.tmdbService.getNowPlaying();
 }

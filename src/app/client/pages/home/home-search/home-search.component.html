@@ -10,13 +10,14 @@
       <input
         type="text"
         placeholder="Введіть назву фільма"
-        [(ngModel)]="searchText"
-        (keyup.enter)="Search(searchText)">
+        [ngModel]="searchText()"
+        (ngModelChange)="searchText.set($event)"
+        (keyup.enter)="search()">
       <button
         type="button"
         class="search"
-        [disabled]="!searchText"
-        (click)="Search(searchText)"
+        [disabled]="!searchText()"
+        (click)="search()"
         >Знайти</button>
     </div>
   </div>
